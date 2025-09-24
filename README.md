@@ -5,11 +5,9 @@ A comprehensive ROS2-based control system for iRobot Roomba 670 using Create 2 d
 ## 📋 Table of Contents
 - [Prerequisites](#prerequisites)
 - [System Overview](#system-overview)
-- [PC Operations](#pc-operations)
+- [Robot Control](#robot-control)
 - [Simulation Environment](#simulation-environment)
 - [Navigation & Mapping](#navigation--mapping)
-- [Advanced Features](#advanced-features)
-- [Troubleshooting](#troubleshooting)
 
 ## 🛠 Prerequisites
 

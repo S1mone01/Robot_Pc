@@ -1,40 +1,39 @@
+
 # 🤖 ROS2 Robot Control System
 
-A comprehensive robotics control system built with ROS2 Jazzy, featuring autonomous navigation, mapping, camera integration, and remote operation capabilities.
+Fully integrated robotic control system based on ROS2 Jazzy, designed for iRobot 670 with Create 2 driver. Supports autonomous navigation, real-time mapping, camera integration, and remote control with LDS02RR LiDAR.
 
 ----------
 
 ## 📋 Table of Contents
 
--   [Prerequisites](#-prerequisites)
--   [Quick Start](#-quick-start)
--   [System Configuration](#-system-configuration)
--   [Robot Control](#-robot-control)
--   [Advanced Robot Operations](#-advanced-robot-operations)
--   [Zone Management System](#-zone-management-system)
--   [Integration & Monitoring](#-integration--monitoring)
--   [Camera Configuration](#-camera-configuration)
--   [Troubleshooting & Diagnostics](#-troubleshooting--diagnostics)
--   [Additional Resources](#-additional-resources)
+-   [System Requirements](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-system-requirements)
+-   [Quick Start](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-quick-start)
+-   [Gazebo Simulation](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-gazebo-simulation)
+-   [Launch Modes](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-launch-modes)
+-   [Mapping Operations](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-mapping-operations)
+-   [Robot Control](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-robot-control)
+-   [Zone Management System](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-zone-management-system)
+-   [Localization](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-localization)
+-   [Diagnostics and Troubleshooting](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-diagnostics-and-troubleshooting)
+-   [Additional Resources](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-additional-resources)
 
 ----------
 
-## 🛠 Prerequisites
+## 🛠 System Requirements
 
-### System Requirements
+### Required Software
 
 -   **ROS2 Jazzy** installed and configured
 -   **Ubuntu 24.04** (recommended)
--   Robot hardware with camera, LIDAR, and motor controllers
--   Network connectivity between robot and control PC
+-   **Gazebo** for simulation
 
-### Hardware Components
+### Supported Hardware
 
--   Raspberry Pi 5 (recommended)
--   Compatible camera module
--   LIDAR sensor
--   Motor controllers for brushes and vacuum
--   Docking station
+-   iRobot 670 with Create 2 driver
+-   LDS02RR LiDAR
+-   Camera (optional)
+-   Joystick (optional for manual control)
 
 ----------
 
@@ -42,45 +41,72 @@ A comprehensive robotics control system built with ROS2 Jazzy, featuring autonom
 
 ### 1. Environment Setup
 
-#### Source ROS2 Environment
+Before any operation, configure the ROS2 environment:
 
 ```bash
 source ~/robot/install/setup.bash
 ```
 
-#### Check USB Connections
+### 2. Installation Verification
+
+Check that all nodes are available:
 
 ```bash
-ls /dev/ttyUSB*
+ros2 node list
+ros2 topic list
 ```
 
-#### Synchronize System Time
+----------
+
+## 🎮 Gazebo Simulation
+
+### Environment Variables Configuration
+
+Before launching Gazebo, set the resource paths:
 
 ```bash
-sudo systemctl restart chrony
+export GZ_SIM_RESOURCE_PATH=$GZ_SIM_RESOURCE_PATH:$(ros2 pkg prefix create_description)/share
+export IGN_GAZEBO_RESOURCE_PATH=$IGN_GAZEBO_RESOURCE_PATH:$(ros2 pkg prefix create_description)/share
 ```
 
-> This command was used when the Raspberry Pi was acting as a hotspot to synchronize the system time.
+### Simulation Modes
 
-### 2. Launch Configurations
+#### Full Interface
 
-#### 🎥 Camera Only Mode
+Launch Gazebo with graphical interface:
 
 ```bash
-ros2 launch create_bringup create_2.py camera:=true navigation:=false foxglove:=false
+ros2 launch gazebo robot.launch.py
 ```
 
-#### 🗺️ Full System (Raspberry Pi)
+#### Headless Mode
+
+For simulations without GUI (resource saving):
 
 ```bash
-ros2 launch create_bringup create_2.py \
-  camera:=true \
-  navigation:=true \
-  foxglove:=true \
-  map:=map_file.yaml
+ros2 launch gazebo robot.launch.py headless:=true
 ```
 
-#### 🧠 AI-Enhanced System
+----------
+
+## 🗺️ Launch Modes
+
+### Complete Navigation System
+
+Full launch with navigation for simulation:
+
+```bash
+ros2 launch create_bringup visual.py map:=map_simulazione.yaml use_sim_time:=true
+```
+
+**Parameters:**
+
+-   `map`: Map file name (without path)
+-   `use_sim_time`: Use simulation time instead of real time
+
+### AI-Enhanced System
+
+Complete system with all features, including ROS bridge for MCP:
 
 ```bash
 ros2 launch create_bringup create_2.py \
@@ -91,148 +117,212 @@ ros2 launch create_bringup create_2.py \
   map:=map_file.yaml
 ```
 
-----------
+**Active Features:**
 
-
-## 🎮 Robot Control
-
-### Manual Control Options
-
-#### ⌨️ Keyboard Teleop
-
-```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
-
-```
-
-#### 🎮 Joystick Control
-
-```bash
-ros2 launch create_bringup joy_teleop.launch.py
-
-```
-
-### Hardware Component Control
-
-#### 🧹 Cleaning System Motors
-
-**Main Brush Motor**
-
-```bash
-ros2 topic pub --once /main_brush_motor create_msgs/msg/MotorSetpoint "{duty_cycle: 1.0}"
-
-```
-
-**Side Brush Motor**
-
-```bash
-ros2 topic pub --once /side_brush_motor create_msgs/msg/MotorSetpoint "{duty_cycle: 1.0}"
-
-```
-
-**Vacuum Motor**
-
-```bash
-ros2 topic pub --once /vacuum_motor create_msgs/msg/MotorSetpoint "{duty_cycle: 1.0}"
-
-```
-
-> **Note:** Duty cycle values range from 0.0 to 1.0 (0% to 100%)
+-   `camera`: Activates camera integration
+-   `navigation`: Enables Nav2 navigation system
+-   `foxglove`: Activates Foxglove Bridge for visualization
+-   `rosbridge`: Enables ROS Bridge for MCP connection
+-   `map`: Specifies the map to use
 
 ----------
 
-## ⚡ Advanced Robot Operations
+## 🗺️ Mapping Operations
+
+### 1. Launch Mapping Mode
+
+Launch the robot in mapping configuration:
+
+```bash
+ros2 launch create_bringup visualM.py use_sim_time:=true
+```
+
+### 2. Autonomous Exploration
+
+Start automatic exploration to create the map:
+
+```bash
+ros2 run custom_explorer explorer
+```
+
+The robot will autonomously explore the environment and build the map in real-time.
+
+### 3. Save Map
+
+Once exploration is complete, save the map:
+
+```bash
+ros2 run nav2_map_server map_saver_cli -f <map_name>
+```
+
+This will create two files:
+
+-   `<map_name>.yaml` - Configuration file
+-   `<map_name>.pgm` - Map image
 
 ### Map Management
 
-**Maps Storage Location:**
+**Storage path:**
 
 ```
 ~/robot/src/create_bringup/map/
 ```
 
-#### Map Operations
+**Best Practices:**
 
--   Store custom maps in the maps directory
--   Specify map files using the `map:=map_file.yaml` parameter
--   Ensure proper file permissions for map access
+-   Use descriptive names for maps
+-   Keep backups of important maps
+-   Verify file permissions after saving
+
+----------
+
+## 🎮 Robot Control
+
+### Manual Control
+
+#### Keyboard
+
+Keyboard control with on-screen instructions:
+
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+**Main commands:**
+
+-   `i`: Forward
+-   `k`: Stop
+-   `j`: Rotate left
+-   `l`: Rotate right
+-   `u/o`: Diagonal movements
+-   `q/z`: Increase/decrease speed
+
+#### Joystick
+
+Controller control:
+
+```bash
+ros2 launch create_bringup joy_teleop.launch.py
+```
 
 ----------
 
 ## 🛡 Zone Management System
 
-To create zones:
+The system allows defining special zones on the map through a point-and-click interface.
 
-1.  **Launch zone maker** (cleaning or speed limiter mode)
-2.  **Click 4 points** on the map interface to define polygon corners with the **Topic:** `/clicked_point`  
-    **Message Type:** `geometry_msgs/msg/PointStamped`
-3.  **Zone is automatically created** from the 4-point polygon
+### How to Create a Zone
 
-### Exclusion Zones Setup
+1.  Launch the zone maker (in exclusion or speed limit mode)
+2.  Click 4 points on the map to define the polygon
+    -   **Topic:** `/clicked_point`
+    -   **Message Type:** `geometry_msgs/msg/PointStamped`
+3.  The zone is created automatically
+
+### Exclusion Zones
+
+Areas the robot must avoid (no-go zones):
 
 ```bash
 ros2 launch create_bringup zone_maker.py
 ```
 
-### Speed Limit Zones Configuration
+**Usage:**
+
+-   Block dangerous areas
+-   Protect fragile objects
+-   Delimit private spaces
+
+### Speed Reduction Zones
+
+Areas with custom speed limits:
 
 ```bash
 ros2 launch create_bringup zone_maker.py node:=speed slow_value:=40
 ```
 
-> **Speed Range:** Values from 1% to 99% of maximum speed
+**Parameters:**
 
-### Zone Types
+-   `node`: Zone type (`speed` for speed limit)
+-   `slow_value`: Percentage of maximum speed (1-99%)
 
--   **Exclusion Zones:** Areas the robot should avoid
--   **Speed Zones:** Areas with reduced speed limits
+**Examples:**
+
+```bash
+# Very slow zone (20% maximum speed)
+ros2 launch create_bringup zone_maker.py node:=speed slow_value:=20
+
+# Moderate zone (60% maximum speed)
+ros2 launch create_bringup zone_maker.py node:=speed slow_value:=60
+```
 
 
+----------
 
-## 🔍 Troubleshooting & Diagnostics
+## 📍 Localization
 
-### System Status Checks
+Launch the robot's localization system on the map:
 
-**List all active ROS2 topics**
+```bash
+ros2 launch create_bringup localization.py
+```
+
+This allows the robot to:
+
+-   Determine its position on the map
+
+----------
+
+## 🔍 Diagnostics and Troubleshooting
+
+### System Verification Commands
+
+#### List Active Topics
 
 ```bash
 ros2 topic list
 ```
 
-**Monitor specific topic data**
+#### Monitor Specific Topic
 
 ```bash
 ros2 topic echo /topic_name
 ```
 
-**Check running nodes**
+**Important topics:**
+
+-   `/cmd_vel` - Velocity commands
+-   `/scan` - LiDAR data
+-   `/odom` - Odometry
+-   `/map` - Current map
+-   `/amcl_pose` - Estimated position
+
+#### Check Active Nodes
 
 ```bash
 ros2 node list
 ```
 
-### Network Diagnostics
-
-**Check network connectivity**
+#### Info on Specific Node
 
 ```bash
-ping <robot_ip_address>
+ros2 node info /node_name
 ```
 
-**Test ROS2 communication**
+#### Verify Connections
 
 ```bash
-ros2 topic hz /cmd_vel
+ros2 topic info /topic_name
 ```
 
-## 📚 Additional Resources
 
-### Configuration Files
 
--   Launch files: `~/robot/src/create_bringup/launch/`
--   Parameter files: `~/robot/src/create_bringup/config/`
--   Map files: `~/robot/src/create_bringup/map/`
+### Important Configuration Files
+
+-   **Launch files:** `~/robot/src/create_bringup/launch/`
+-   **Nav2 parameters:** `~/robot/src/create_bringup/config/`
+-   **Maps:** `~/robot/src/create_bringup/map/`
 
 ----------
 
-_This guide provides comprehensive instructions for operating your ROS2-based robot control system. For additional support, consult the official ROS2 documentation or your hardware manufacturer's guidelines._
+_This guide provides complete instructions for operating the ROS2-based robot control system. For additional support, consult the official ROS2 documentation or hardware manufacturer guidelines._

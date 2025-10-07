@@ -7,17 +7,18 @@ Fully integrated robotic control system based on ROS2 Jazzy, designed for iRobot
 
 ## 📋 Table of Contents
 
--   [System Requirements](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-system-requirements)
--   [Quick Start](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-quick-start)
--   [Gazebo Simulation](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-gazebo-simulation)
--   [Launch Modes](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-launch-modes)
--   [Mapping Operations](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-mapping-operations)
--   [Robot Control](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-robot-control)
--   [Zone Management System](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-zone-management-system)
--   [Localization](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-localization)
--   [Diagnostics and Troubleshooting](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-diagnostics-and-troubleshooting)
--   [Additional Resources](https://claude.ai/chat/1d2bef63-79c5-42d9-b94a-6ca683edf56b#-additional-resources)
+-   [System Requirements](#-system-requirements)
+-   [Quick Start](#-quick-start)
+-   [Gazebo Simulation](#-gazebo-simulation)
+-   [Launch Modes](#-launch-modes)
+-   [Mapping Operations](#-mapping-operations)
+-   [Robot Control](#-robot-control)
+-   [Zone Management System](#-zone-management-system)
+-   [Localization](#-localization)
+-   [Diagnostics and Troubleshooting](#-diagnostics-and-troubleshooting)
+-   [Additional Resources](#-additional-resources)
 
+-   **Physical Robot:** [Robot_Pi Repository](https://github.com/S1mone01/Robot_Pi)
 ----------
 
 ## 🛠 System Requirements
